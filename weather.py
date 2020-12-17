@@ -7,6 +7,20 @@ appi = 'appid=36271b233b57e9943b4f883e0d6a19bb'
 param = '&units=metric&lang=ru&'
 
 
+def center(win):
+    win.update_idletasks()
+    width = win.winfo_width()
+    frm_width = win.winfo_rootx() - win.winfo_x()
+    win_width = width + 2 * frm_width
+    height = win.winfo_height()
+    title_bar_height = win.winfo_rooty() - win.winfo_y()
+    win_height = height + title_bar_height + frm_width
+    x = win.winfo_screenwidth() // 2 - win_width // 2
+    y = win.winfo_screenheight() // 2 - win_height // 2
+    win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+    win.deiconify()
+
+
 def DateTranslate(date: str, posix_time: int) -> str:
 	if (date == str(datetime.utcfromtimestamp(posix_time).strftime('%A'))):
 		if(date == "Monday"):
@@ -197,7 +211,7 @@ def GetCurrentWeather() -> None:
 root = Tk()
 root.title("Погода")
 root.resizable(False, False)
-root.geometry('430x500')
+root.geometry('435x465')
 
 StartFrame = Frame(root)
 CurrentFrame = Frame(root)
@@ -334,4 +348,5 @@ Night5.grid(row=5, column=5)
 Night6.grid(row=6, column=5)
 Night7.grid(row=7, column=5)
 
+center(root)
 root.mainloop()
