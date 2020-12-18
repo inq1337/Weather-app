@@ -253,6 +253,7 @@ def GetCurrentWeather() -> None:
         temp = str(round(data['main']['temp'])) + '°C'
         f_l = str(round(data['main']['feels_like'])) + '°C'
         desc = data['weather'][0]['description']
+        desc = str.capitalize(desc)
         wnd = str(round(data['wind']['speed'])) + ' м/с'
         dt = data['dt']
         humid = str(data['main']['humidity']) + '%'
