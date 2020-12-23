@@ -6,7 +6,7 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID()
 
 appi = 'appid=36271b233b57e9943b4f883e0d6a19bb'
 param = '&units=metric&lang=ru&'
-color = '#E2E7EC'
+color = 'white'
 fgcolor = 'black'
 abspath = os.path.abspath(__file__)
 dirname = os.path.dirname(abspath)
