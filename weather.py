@@ -61,7 +61,6 @@ def Center(root):
     root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
 
 
-
 def DateTranslate(date: str, posix_time: int) -> str:
 	if (date == str(datetime.utcfromtimestamp(posix_time).strftime('%A'))):
 		if(date == "Monday"):
@@ -274,12 +273,14 @@ def GetCurrentWeather(city: str, destr: bool) -> None:
         print('Exception (find) in current:', e)
         pass
 
+
 def GetCityName() -> None:
     city = cityname.get()
     city_cache = open('city.txt', 'w',  encoding='UTF-8')
     city_cache.write(city)
     city_cache.close()
     GetCurrentWeather(city, destr)
+
 
 root = Tk()
 root.title('Погода')
