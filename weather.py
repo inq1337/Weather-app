@@ -1,15 +1,18 @@
-import json
-import requests
-import time
-import ctypes
+import json, os, requests, time, ctypes
 from datetime import datetime
-from tkinter import Tk, Label, Frame, Button, Entry, TOP, BOTH, W, RIGHT, LEFT, BOTTOM, PhotoImage, Image
+from tkinter import Tk, Label, Frame, Button, Entry, TOP, BOTH, W, RIGHT, LEFT, BOTTOM, PhotoImage, Image, CENTER
 
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID()
 
 appi = 'appid=36271b233b57e9943b4f883e0d6a19bb'
 param = '&units=metric&lang=ru&'
+color = '#E2E7EC'
+fgcolor = 'black'
+abspath = os.path.abspath(__file__)
+dirname = os.path.dirname(abspath)
+os.chdir(dirname)
 
+destr = False
 
 curr_icons = {
     '01d' : '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',
@@ -45,18 +48,18 @@ forecast_icons = {
 }
 
 
-def center(win):
-    win.update_idletasks()
-    width = win.winfo_width()
-    frm_width = win.winfo_rootx() - win.winfo_x()
-    win_width = width + 2 * frm_width
-    height = win.winfo_height()
-    title_bar_height = win.winfo_rooty() - win.winfo_y()
-    win_height = height + title_bar_height + frm_width
-    x = win.winfo_screenwidth() // 2 - win_width // 2
-    y = win.winfo_screenheight() // 2 - win_height // 2
-    win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
-    win.deiconify()
+def Center(root):
+    window_height = 470
+    window_width = 440  
+
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()   
+
+    x_cordinate = int((screen_width/2) - (window_width/2))
+    y_cordinate = int((screen_height/2) - (window_height/2))    
+
+    root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
+
 
 
 def DateTranslate(date: str, posix_time: int) -> str:
@@ -193,7 +196,7 @@ def GetWeatherForecast(coord: str, tz: int) -> None:
     excl = '&exclude=current,minutely,hourly,alerts'
     req = serv + coord + excl + param + appi
     try:
-        res = requests.get(req).content.decode("UTF8")
+        res = requests.get(req).content.decode('UTF-8')
         data = json.loads(res)
         weather = []
         weather_temp = []
@@ -239,12 +242,11 @@ def GetWeatherForecast(coord: str, tz: int) -> None:
         pass
 
 
-def GetCurrentWeather() -> None:
+def GetCurrentWeather(city: str, destr: bool) -> None:
     serv = 'http://api.openweathermap.org/data/2.5/weather?q='
-    city = cityname.get()
     req = serv + city + param + appi
     try:
-        res = requests.get(req).content.decode("UTF8")
+        res = requests.get(req).content.decode('UTF-8')
         data = json.loads(res)
         lat = str(data['coord']['lat'])
         lon = str(data['coord']['lon'])
@@ -263,43 +265,57 @@ def GetCurrentWeather() -> None:
         ctime = str(datetime.utcfromtimestamp(posix_time).strftime('%d %B, %H:%M'))
         ctime = DateTranslate(ctime, posix_time)
 
+        if (destr):
+            StartTextFrame.destroy()
+
         GetWeatherForecast(coord, tz)
         OutCurrentWeather(temp, f_l, desc, wnd, ctime, humid, icon_name)
     except Exception as e:
         print('Exception (find) in current:', e)
         pass
 
+def GetCityName() -> None:
+    city = cityname.get()
+    city_cache = open('city.txt', 'w',  encoding='UTF-8')
+    city_cache.write(city)
+    city_cache.close()
+    GetCurrentWeather(city, destr)
+
 root = Tk()
-root.title("Погода")
+root.title('Погода')
 root.resizable(False, False)
-root.geometry('440x470')
+Center(root)
 
-StartFrame = Frame(root)
-CurrentFrameR = Frame(root)
-CurrentFrameL = Frame(root)
-ForecastFrame = Frame(root)
-BottomFrame = Frame(root, height=7)
+StartFrame = Frame(root, bg=color)
+CurrentFrameR = Frame(root, bg=color)
+HelpFrameR = Frame(root, bg=color, width=15)
+CurrentFrameL = Frame(root, bg=color)
+HelpFrameL = Frame(root, bg=color, width=15)
+ForecastFrame = Frame(root, bg=color)
+BottomFrame = Frame(root, bg=color, height=7)
 
-StartFrame.pack(side=TOP)
+StartFrame.pack(side=TOP, fill=BOTH)
 BottomFrame.pack(side=BOTTOM, fill=BOTH)
 ForecastFrame.pack(side=BOTTOM, fill=BOTH)
-CurrentFrameR.pack(side=RIGHT, fill=BOTH)
-CurrentFrameL.pack(side=LEFT, fill=BOTH)
+CurrentFrameR.pack(expand=True, side=RIGHT, fill=BOTH)
+HelpFrameR.pack(expand=True, side=RIGHT, fill=BOTH)
+CurrentFrameL.pack(expand=True, side=LEFT, fill=BOTH)
+HelpFrameL.pack(expand=True, side=RIGHT, fill=BOTH)
 
-cityname = Entry(StartFrame, font=("Google Sans", 11))
+cityname = Entry(StartFrame, font=("Google Sans", 11), justify=CENTER, bg='#EFF3F8', fg=fgcolor)
 cityname.pack()
 
-StartButton = Button(StartFrame, text='Получить', font=("Google Sans", 10), command=GetCurrentWeather)
+StartButton = Button(StartFrame, text='Получить', font=("Google Sans", 10), command=GetCityName, bg='#EFF3F8', fg=fgcolor)
 StartButton.pack()
 
-dtime = Label(CurrentFrameL, font=("Google Sans", 10), pady=5, padx=5)
-temperature = Label(CurrentFrameL, font=("Google Sans", 54))
-feels_like = Label(CurrentFrameL, font=("Google Sans", 13), pady=5, padx=5)
-humidity = Label(CurrentFrameL, font=("Google Sans", 13), pady=5, padx=5)
-empty_l = Label(CurrentFrameR, padx=5)
-current_icon = Label(CurrentFrameR)
-description = Label(CurrentFrameR, font=("Google Sans", 12), pady=5, padx=5)
-wind = Label(CurrentFrameR, font=("Google Sans", 12), pady=5, padx=5)
+dtime = Label(CurrentFrameL, font=("Google Sans", 10), pady=5, padx=5, bg=color, fg=fgcolor)
+temperature = Label(CurrentFrameL, font=("Google Sans", 54), bg=color, fg=fgcolor)
+feels_like = Label(CurrentFrameL, font=("Google Sans", 13), pady=5, padx=5, bg=color, fg=fgcolor)
+humidity = Label(CurrentFrameL, font=("Google Sans", 13), pady=5, padx=5, bg=color, fg=fgcolor)
+empty_l = Label(CurrentFrameR, padx=5, bg=color, fg=fgcolor)
+current_icon = Label(CurrentFrameR, bg=color, fg=fgcolor)
+description = Label(CurrentFrameR, font=("Google Sans", 12), pady=5, padx=5, bg=color, fg=fgcolor)
+wind = Label(CurrentFrameR, font=("Google Sans", 12), pady=5, padx=5, bg=color, fg=fgcolor)
 
 dtime.pack()
 temperature.pack()
@@ -310,12 +326,13 @@ current_icon.pack()
 description.pack()
 wind.pack()
 
-Info0 = Label(ForecastFrame, font=("Google Sans", 14))
-Info1 = Label(ForecastFrame, font=("Google Sans", 14))
-Info2 = Label(ForecastFrame, font=("Google Sans", 14))
-Info3 = Label(ForecastFrame, font=("Google Sans", 14))
-Info4 = Label(ForecastFrame, font=("Google Sans", 14))
-Info5 = Label(ForecastFrame, font=("Google Sans", 14))
+Info0 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Info1 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Info2 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Info3 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Info4 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Info5 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+
 Info0.grid(row=0, column=0)
 Info1.grid(row=0, column=1)
 Info2.grid(row=0, column=2)
@@ -323,13 +340,13 @@ Info3.grid(row=0, column=3)
 Info4.grid(row=0, column=4)
 Info5.grid(row=0, column=5)
 
-Date1 = Label(ForecastFrame, font=("Google Sans", 14))
-Date2 = Label(ForecastFrame, font=("Google Sans", 14))
-Date3 = Label(ForecastFrame, font=("Google Sans", 14))
-Date4 = Label(ForecastFrame, font=("Google Sans", 14))
-Date5 = Label(ForecastFrame, font=("Google Sans", 14))
-Date6 = Label(ForecastFrame, font=("Google Sans", 14))
-Date7 = Label(ForecastFrame, font=("Google Sans", 14))
+Date1 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Date2 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Date3 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Date4 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Date5 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Date6 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
+Date7 = Label(ForecastFrame, font=("Google Sans", 14), bg=color, fg=fgcolor)
 
 Date1.grid(row=1, column=0, sticky=W, pady=1, padx=5)
 Date2.grid(row=2, column=0, sticky=W, pady=1, padx=5)
@@ -339,13 +356,13 @@ Date5.grid(row=5, column=0, sticky=W, pady=1, padx=5)
 Date6.grid(row=6, column=0, sticky=W, pady=1, padx=5)
 Date7.grid(row=7, column=0, sticky=W, pady=1, padx=5)
 
-Picture1 = Label(ForecastFrame)
-Picture2 = Label(ForecastFrame)
-Picture3 = Label(ForecastFrame)
-Picture4 = Label(ForecastFrame)
-Picture5 = Label(ForecastFrame)
-Picture6 = Label(ForecastFrame)
-Picture7 = Label(ForecastFrame)
+Picture1 = Label(ForecastFrame, bg=color, fg=fgcolor)
+Picture2 = Label(ForecastFrame, bg=color, fg=fgcolor)
+Picture3 = Label(ForecastFrame, bg=color, fg=fgcolor)
+Picture4 = Label(ForecastFrame, bg=color, fg=fgcolor)
+Picture5 = Label(ForecastFrame, bg=color, fg=fgcolor)
+Picture6 = Label(ForecastFrame, bg=color, fg=fgcolor)
+Picture7 = Label(ForecastFrame, bg=color, fg=fgcolor)
 
 Picture1.grid(row=1, column=1)
 Picture2.grid(row=2, column=1)
@@ -355,13 +372,13 @@ Picture5.grid(row=5, column=1)
 Picture6.grid(row=6, column=1)
 Picture7.grid(row=7, column=1)
 
-Morning1 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Morning2 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Morning3 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Morning4 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Morning5 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Morning6 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Morning7 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
+Morning1 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Morning2 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Morning3 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Morning4 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Morning5 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Morning6 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Morning7 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
 
 Morning1.grid(row=1, column=2)
 Morning2.grid(row=2, column=2)
@@ -371,13 +388,13 @@ Morning5.grid(row=5, column=2)
 Morning6.grid(row=6, column=2)
 Morning7.grid(row=7, column=2)
 
-Day1 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Day2 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Day3 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Day4 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Day5 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Day6 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Day7 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
+Day1 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Day2 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Day3 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Day4 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Day5 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Day6 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Day7 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
 
 Day1.grid(row=1, column=3)
 Day2.grid(row=2, column=3)
@@ -387,13 +404,13 @@ Day5.grid(row=5, column=3)
 Day6.grid(row=6, column=3)
 Day7.grid(row=7, column=3)
 
-Evening1 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Evening2 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Evening3 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Evening4 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Evening5 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Evening6 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Evening7 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
+Evening1 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Evening2 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Evening3 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Evening4 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Evening5 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Evening6 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Evening7 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
 
 Evening1.grid(row=1, column=4)
 Evening2.grid(row=2, column=4)
@@ -403,13 +420,13 @@ Evening5.grid(row=5, column=4)
 Evening6.grid(row=6, column=4)
 Evening7.grid(row=7, column=4)
 
-Night1 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Night2 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Night3 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Night4 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Night5 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Night6 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
-Night7 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2)
+Night1 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Night2 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Night3 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Night4 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Night5 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Night6 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
+Night7 = Label(ForecastFrame, font=("Google Sans", 14), pady=1, padx=2, bg=color, fg=fgcolor)
 
 Night1.grid(row=1, column=5)
 Night2.grid(row=2, column=5)
@@ -419,7 +436,23 @@ Night5.grid(row=5, column=5)
 Night6.grid(row=6, column=5)
 Night7.grid(row=7, column=5)
 
-icon_for_app = PhotoImage(data=curr_icons['01d'])
+icon_for_app = PhotoImage(data=curr_icons['10d'])
 root.tk.call('wm','iconphoto',root._w,icon_for_app)
-center(root)
+
+if (os.path.exists('city.txt')):
+    city_cache = open('city.txt', 'r',  encoding='UTF-8')
+
+    if (os.stat('city.txt').st_size != 0):
+        city = city_cache.read()
+        city = str(city)
+        city_cache.close()
+        GetCurrentWeather(city, destr)
+        cityname.insert(0, city)
+else:
+    StartTextFrame = Frame(root, bg=color)
+    StartText = Label(StartTextFrame, text='    Введите название города\n    в поле вверху приложения', font=("Google Sans", 21), bg=color, anchor=CENTER)
+    StartTextFrame.pack(side=TOP, fill=BOTH, expand=True)
+    StartText.pack()
+    destr = True
+
 root.mainloop()
