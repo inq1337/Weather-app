@@ -6,7 +6,7 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID()
 
 appi = 'appid=36271b233b57e9943b4f883e0d6a19bb'
 param = '&units=metric&lang=ru&'
-color = 'white'
+color = '#F9F9F9'
 fgcolor = 'black'
 abspath = os.path.abspath(__file__)
 dirname = os.path.dirname(abspath)
@@ -302,10 +302,10 @@ HelpFrameR.pack(expand=True, side=RIGHT, fill=BOTH)
 CurrentFrameL.pack(expand=True, side=LEFT, fill=BOTH)
 HelpFrameL.pack(expand=True, side=RIGHT, fill=BOTH)
 
-cityname = Entry(StartFrame, font=("Google Sans", 11), justify=CENTER, bg='#EFF3F8', fg=fgcolor)
+cityname = Entry(StartFrame, font=("Google Sans", 11), justify=CENTER, bg='#F8F9F9', fg=fgcolor)
 cityname.pack()
 
-StartButton = Button(StartFrame, text='Получить', font=("Google Sans", 10), command=GetCityName, bg='#EFF3F8', fg=fgcolor)
+StartButton = Button(StartFrame, text='Получить', font=("Google Sans", 10), command=GetCityName, bg='#F8F9F9', fg=fgcolor)
 StartButton.pack()
 
 dtime = Label(CurrentFrameL, font=("Google Sans", 10), pady=5, padx=5, bg=color, fg=fgcolor)
